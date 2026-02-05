@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Homepage</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark">TL</div>
+          <div class="brand-copy">
+            <h1 class="brand-title">Student Homepage</h1>
+            <p class="brand-subtitle">
+              A calm snapshot of progress and next steps.
+            </p>
+          </div>
+        </div>
+        <div class="student-chip">
+          <div class="student-avatar placeholder-avatar"></div>
+          <div class="student-meta">
+            <div class="student-name" id="student-name">Student Name</div>
+            <div class="student-tagline" id="student-tagline">
+              Learning builds week by week.
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <!-- Top Section: Next Lesson -->
+        <section class="section section-grid">
+          <div class="card card-primary" id="next-lesson-card">
+            <div class="card-header">
+              <h2>Next lesson</h2>
+              <span class="pill pill-soft" id="next-lesson-status-pill"
+                >Pending</span
+              >
+            </div>
+            <div class="next-lesson-layout">
+              <div class="next-lesson-time">
+                <div class="next-lesson-day" id="next-lesson-day">Monday</div>
+                <div class="next-lesson-date" id="next-lesson-date">
+                  2026-01-30 · 14:30
+                </div>
+              </div>
+              <div class="next-lesson-teacher">
+                <div class="avatar-ring">
+                  <div
+                    class="avatar-img placeholder-avatar"
+                    id="teacher-avatar"
+                  ></div>
+                </div>
+                <div class="teacher-meta">
+                  <div class="teacher-label">Teacher</div>
+                  <div class="teacher-name" id="teacher-name">
+                    Ms. Johnson
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="next-lesson-actions">
+              <button
+                class="btn btn-primary"
+                id="join-lesson-btn"
+                disabled
+                aria-disabled="true"
+              >
+                Join lesson
+              </button>
+              <button class="btn btn-ghost" id="view-schedule-btn">
+                View schedule
+              </button>
+              <button class="btn btn-ghost danger-soft" id="cancel-lesson-btn">
+                Cancel lesson
+              </button>
+            </div>
+            <p class="helper-text" id="lesson-helper-text">
+              The join button becomes active about 5 minutes before your lesson
+              starts.
+            </p>
+          </div>
+
+          <div class="card card-compact" id="classes-usage-card">
+            <div class="card-header">
+              <h2>Classes this week</h2>
+            </div>
+            <div class="metric-row">
+              <div class="metric-main">
+                <span class="metric-value" id="classes-used-text"
+                  >Used 0 of 0</span
+                >
+                <span class="metric-caption"
+                  >Your weekly class allowance.</span
+                >
+              </div>
+              <div class="metric-bar-wrap">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="classes-usage-bar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <p class="helper-text">
+              Consistency matters more than speed – even one lesson keeps your
+              momentum going.
+            </p>
+          </div>
+        </section>
+
+        <!-- Learning Progress Snapshot -->
+        <section class="section">
+          <header class="section-header">
+            <h2>Learning progress snapshot</h2>
+            <p>
+              A calm snapshot of where you are right now on the CEFR scale.
+            </p>
+          </header>
+          <div class="section-grid section-grid-3">
+            <div class="card" id="current-level-card">
+              <div class="card-header">
+                <h3>Current level</h3>
+                <span class="pill" id="current-level-pill">A2</span>
+              </div>
+              <div class="cefr-scale" aria-hidden="true">
+                <div class="cefr-step completed">A1</div>
+                <div class="cefr-step current">A2</div>
+                <div class="cefr-step">B1</div>
+                <div class="cefr-step">B2</div>
+                <div class="cefr-step">C1</div>
+                <div class="cefr-step">C2</div>
+              </div>
+              <p class="helper-text" id="level-meaning">
+                Can communicate in simple routine tasks.
+              </p>
+              <p class="microcopy">
+                Small changes in percentages are normal – they reflect progress
+                inside your current level, not your overall ability.
+              </p>
+            </div>
+
+            <div class="card" id="learning-goal-card">
+              <div class="card-header">
+                <h3>Current learning goal</h3>
+              </div>
+              <p class="goal-text" id="learning-goal">
+                Improve business English communication.
+              </p>
+              <p class="helper-text">
+                This combines your saved goal with what your teacher planned in
+                recent lessons.
+              </p>
+            </div>
+
+            <div class="card" id="upcoming-focus-card">
+              <div class="card-header">
+                <h3>Upcoming learning focus</h3>
+              </div>
+              <ul class="checkpoints" id="upcoming-focus-list">
+                <li>
+                  <span class="checkpoint-dot"></span>
+                  <span>Focus on pronunciation in professional contexts.</span>
+                </li>
+              </ul>
+              <p class="helper-text">
+                Based on your latest lesson summaries and teacher feedback.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skill Snapshot -->
+        <section class="section">
+          <header class="section-header">
+            <h2>Skill snapshot</h2>
+            <p>
+              How key skills are growing inside your current level. Not a score,
+              but a sense of direction.
+            </p>
+          </header>
+          <div class="section-grid section-grid-4" id="skills-grid">
+            <!-- Cards filled by app.js -->
+          </div>
+        </section>
+
+        <!-- Practice & Games -->
+        <section class="section">
+          <header class="section-header">
+            <h2>Practice & games</h2>
+            <p>Short activities that connect directly to your recent lessons.</p>
+          </header>
+          <div class="card" id="practice-card">
+            <ul class="list" id="practice-list">
+              <!-- Filled by app.js -->
+            </ul>
+            <p class="empty-state" id="practice-empty" hidden>
+              All practice completed for now – great job. New practice appears
+              after your next lesson.
+            </p>
+          </div>
+        </section>
+
+        <!-- Weekly Highlights -->
+        <section class="section">
+          <header class="section-header">
+            <h2>Weekly highlights</h2>
+            <p>
+              A simple weekly snapshot to celebrate progress, not to track every
+              number.
+            </p>
+          </header>
+          <div class="section-grid section-grid-3">
+            <div class="card metric-card">
+              <div class="metric-label">New words learned</div>
+              <div class="metric-large" id="weekly-words">0</div>
+              <p class="helper-text">
+                Based on vocabulary from your lessons in the last 7 days.
+              </p>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Lessons completed</div>
+              <div class="metric-large" id="weekly-lessons">0</div>
+              <p class="helper-text">
+                Each finished lesson keeps your learning momentum going.
+              </p>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Speaking percentage</div>
+              <div class="metric-large">
+                <span id="speaking-percentage">0%</span>
+              </div>
+              <p class="helper-text">
+                Based on how engaged you were in your most recent lesson.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- System Adaptation Message -->
+        <section class="section">
+          <div class="card card-soft">
+            <p class="system-message" id="system-message">
+              The more you learn with us, the more precisely the system adapts
+              to your level and goals. This learning path is continuously
+              personalized based on your lessons.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
