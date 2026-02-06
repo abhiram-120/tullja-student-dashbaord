@@ -30,6 +30,30 @@
       </header>
 
       <main class="app-main">
+        <section class="section">
+          <div class="student-selector">
+            <div class="student-selector-main">
+              <label class="student-selector-label" for="student-select">
+                Student
+              </label>
+              <select id="student-select" class="student-select">
+                <option value="">Loading students...</option>
+              </select>
+            </div>
+            <div class="student-selector-search">
+              <input
+                type="search"
+                id="student-search-input"
+                class="student-search-input"
+                placeholder="Search by name or ID"
+                autocomplete="off"
+              />
+              <button class="btn btn-ghost" id="student-search-btn">
+                Search
+              </button>
+            </div>
+          </div>
+        </section>
         <!-- Top Section: Next Lesson -->
         <section class="section section-grid">
           <div class="card card-primary" id="next-lesson-card">

@@ -562,6 +562,55 @@ app.get("/api/home/weekly", async (req, res) => {
   }
 });
 
+// Lightweight student list for selector/search.
+app.get("/api/students", async (req, res) => {
+  try {
+    const { q } = req.query;
+    const limitRaw = req.query.limit;
+    let limit = parseInt(limitRaw, 10);
+    if (Number.isNaN(limit) || limit <= 0 || limit > 200) {
+      limit = 50;
+    }
+
+    const params = [];
+    let where = "role_name = 'student'";
+
+    if (q && typeof q === "string" && q.trim().length) {
+      const term = `%${q.trim()}%`;
+      const maybeId = parseInt(q.trim(), 10);
+
+      where += " AND (full_name LIKE ? OR email LIKE ? OR id = ?)";
+      params.push(term, term, Number.isNaN(maybeId) ? 0 : maybeId);
+    }
+
+    const sql = `
+      SELECT id, full_name, email
+      FROM users
+      WHERE ${where}
+      ORDER BY full_name ASC
+      LIMIT ?;
+    `;
+
+    params.push(limit);
+
+    const [rows] = await db.execute(sql, params);
+
+    const mapped = rows.map((row) => ({
+      id: row.id,
+      name: row.full_name || `Student #${row.id}`,
+      email: row.email || null,
+      label: row.full_name
+        ? `${row.full_name} (#${row.id})`
+        : `Student #${row.id}`,
+    }));
+
+    res.json(mapped);
+  } catch (err) {
+    console.error("Error in /api/students:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });

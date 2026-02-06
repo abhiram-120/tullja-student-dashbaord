@@ -1,27 +1,9 @@
-// Toggle this later when backend is ready.
-const USE_MOCK_DATA = true;
+let currentStudentId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (USE_MOCK_DATA) {
-    hydrateWithMockData();
-  } else {
-    // Replace 1 with the authenticated student's id.
-    loadFromApi({ studentId: 1 });
-  }
+  setupStudentSelector();
 });
 
-function hydrateWithMockData() {
-  const mock = getMockSnapshot();
-  renderStudentHeader(mock.student);
-  renderNextLesson(mock.nextLesson);
-  renderClassesUsage(mock.classesUsage);
-  renderProgressSnapshot(mock.progressSnapshot);
-  renderSkills(mock.skills);
-  renderPractice(mock.practice);
-  renderWeeklyHighlights(mock.weeklyHighlights);
-}
-
-// Example shape for future backend integration.
 async function loadFromApi({ studentId }) {
   try {
     const [
@@ -69,9 +51,121 @@ async function loadFromApi({ studentId }) {
     renderPractice(practice);
     renderWeeklyHighlights(weekly);
   } catch (err) {
-    /* eslint-disable no-console */
-    console.error("Failed to load data from API, falling back to mock:", err);
-    hydrateWithMockData();
+    console.error("Failed to load data from API:", err);
+    showGlobalError(
+      "Unable to load data for this student. Please check the connection or try another student."
+    );
+  }
+}
+
+function showGlobalError(message) {
+  // Reuse the system message area for now.
+  const systemMessage = document.getElementById("system-message");
+  if (systemMessage) {
+    systemMessage.textContent = message;
+  } else {
+    // Fallback to alert if needed.
+    // eslint-disable-next-line no-alert
+    alert(message);
+  }
+}
+
+async function setupStudentSelector() {
+  const selectEl = document.getElementById("student-select");
+  const searchInput = document.getElementById("student-search-input");
+  const searchBtn = document.getElementById("student-search-btn");
+
+  if (!selectEl) {
+    return;
+  }
+
+  // Initial load of students list.
+  await loadStudents();
+
+  selectEl.addEventListener("change", () => {
+    const value = selectEl.value;
+    if (!value) return;
+    const id = parseInt(value, 10);
+    if (Number.isNaN(id)) return;
+    currentStudentId = id;
+    loadFromApi({ studentId: currentStudentId });
+  });
+
+  if (searchBtn && searchInput) {
+    const performSearch = async () => {
+      const term = searchInput.value.trim();
+      await loadStudents(term);
+      if (selectEl.value) {
+        const id = parseInt(selectEl.value, 10);
+        if (!Number.isNaN(id)) {
+          currentStudentId = id;
+          loadFromApi({ studentId: currentStudentId });
+        }
+      }
+    };
+
+    searchBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      performSearch();
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        performSearch();
+      }
+    });
+  }
+}
+
+async function loadStudents(query) {
+  const selectEl = document.getElementById("student-select");
+  if (!selectEl) return;
+
+  try {
+    const url = new URL("/api/students", window.location.origin);
+    if (query && query.trim().length) {
+      url.searchParams.set("q", query.trim());
+    }
+    const res = await fetch(url.toString());
+    if (!res.ok) {
+      throw new Error("Failed to load students");
+    }
+    const students = await res.json();
+
+    selectEl.innerHTML = "";
+
+    if (!students.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No students found";
+      selectEl.appendChild(opt);
+      return;
+    }
+
+    students.forEach((s, index) => {
+      const opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.label;
+      selectEl.appendChild(opt);
+
+      if (index === 0 && currentStudentId == null) {
+        currentStudentId = s.id;
+      }
+    });
+
+    // If we don't yet have a student loaded, load the first one.
+    if (currentStudentId != null) {
+      selectEl.value = String(currentStudentId);
+      await loadFromApi({ studentId: currentStudentId });
+    }
+  } catch (err) {
+    console.error("Failed to load students:", err);
+    selectEl.innerHTML = "";
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Unable to load students";
+    selectEl.appendChild(opt);
   }
 }
 
@@ -306,87 +400,5 @@ function renderWeeklyHighlights(weekly) {
     const pct = weekly.speaking_percentage ?? 0;
     speakingEl.textContent = `${pct}%`;
   }
-}
-
-// Simple mock snapshot close to what the SQL would return.
-function getMockSnapshot() {
-  return {
-    student: {
-      name: "Alex",
-      tagline: "Consistency over time is what moves levels.",
-    },
-    nextLesson: {
-      class_id: 123,
-      day_name: "Thursday",
-      lesson_date: "2026-02-05",
-      lesson_time: "18:30",
-      status: "pending",
-      join_button_status: "disabled",
-      teacher_name: "Ms. Johnson",
-      join_url: "#",
-    },
-    classesUsage: {
-      classes_used: 2,
-      total_weekly_lessons: 5,
-    },
-    progressSnapshot: {
-      current_level: "A2",
-      level_meaning: "Can communicate in simple routine tasks.",
-      goal_name: "Improve business English communication.",
-      upcoming_focus: [
-        "Focus on pronunciation and fluency in professional contexts.",
-        "Practice past and future tense in everyday situations.",
-      ],
-    },
-    skills: [
-      {
-        name: "Grammar",
-        progress: 78,
-        foundationText:
-          "Weighted from your latest assessment and grammar feedback from lessons.",
-      },
-      {
-        name: "Vocabulary",
-        progress: 82,
-        foundationText:
-          "Combines assessment scores with words you've mastered in lessons and games.",
-      },
-      {
-        name: "Speaking",
-        progress: 85,
-        foundationText:
-          "Built from fluency assessments and speaking feedback – more speaking, more growth.",
-      },
-      {
-        name: "Pronunciation",
-        progress: 76,
-        foundationText:
-          "Based on teacher ratings across your recent lessons, converted into a calm percentage.",
-      },
-    ],
-    practice: [
-      {
-        id: 1,
-        title: "Vocabulary quiz – Work emails",
-        subtitle: "From Jan 28 lesson with Ms. Johnson",
-        status: "pending",
-        statusLabel: "Pending",
-        estimatedMinutes: 8,
-      },
-      {
-        id: 2,
-        title: "Grammar practice – Past simple",
-        subtitle: "From Jan 25 lesson",
-        status: "approved",
-        statusLabel: "Ready to practice",
-        estimatedMinutes: 6,
-      },
-    ],
-    weeklyHighlights: {
-      words: 24,
-      lessons: 3,
-      speaking_percentage: 85,
-    },
-  };
 }
 
