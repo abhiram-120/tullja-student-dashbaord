@@ -1,4 +1,4 @@
-# Student Homepage Frontend
+# Student Homepage 
 
 This folder contains a standalone frontend for the student homepage dashboard. It is designed to pair with a Node.js + MySQL backend that exposes APIs based on the SQL queries in the provided documentation.
 
